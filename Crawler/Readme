@@ -1,0 +1,5 @@
+2016/06/09 上傳y拍爬蟲
+
+trace code建議從 category -> tag -> main
+
+todo: 決定儲存格式以後完善contentCraw 函數，完成整個爬蟲
