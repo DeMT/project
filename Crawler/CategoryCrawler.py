@@ -5,32 +5,27 @@
 
 @author: kazimir
 '''
+from Requester import Requester
 import requests
 from bs4 import BeautifulSoup
 import time
+import re
 
+class CategoryCrawler(Requester):
 
-class CategoryCrawler:
-    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.\
-    94 Safari/537.36'
-    }
     domainUrl = 'https://tw.bid.yahoo.com/tw/'
     def __init__(self , url) :          #設定CategoryCrawler建構子
         self.url = url
         self.hasNext = True              
     def firstCraw(self):                #爬第一次，目的是取回下一頁連結
-        rs = requests.session()
-        res = rs.get(self.url,headers=self.headers)
-        soup = BeautifulSoup(res.text)
+        soup = super(CategoryCrawler,self).req(self.url)
         nextpage = soup.select('.next-page a')[0]['href']
         self.targetTag=(soup.select('#srp_bc span')[-1].text).encode('utf-8')    #這裡python內(unicode環境)->編碼為utf-8(str)
         print self.targetTag                                #抓一下這個最小類別的名稱
         return nextpage
         
     def urlGather(self,url):                                #把一頁的網址收集起來 回傳一個List
-         rs = requests.session()
-         res = rs.get(url,headers=self.headers)
-         soup = BeautifulSoup(res.text)
+         soup = super(CategoryCrawler,self).req(self.url)
          urlList =list()
          for title in soup.select('.srp-pdtitle'):
             urlList.append(title.select('a')[0]['href'])

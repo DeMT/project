@@ -9,7 +9,8 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
-class TagCrawler :
+from Requester import Requester
+class TagCrawler(Requester) :
     headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.\
                 94 Safari/537.36'
                }
@@ -17,17 +18,13 @@ class TagCrawler :
         self.url = url                  #啟動url
                         
     def allsubCraw(self):
-        rs = requests.session()
-        res = rs.get(self.url,headers=self.headers)
-        soup = BeautifulSoup(res.text)
+        soup = super(TagCrawler,self).req(self.url)
         root ={}
         for url in soup.select('.more a'):  
             root[url.text] = url['href']
         return  root 
     def leafCraw(self,bigUrl):
-        rs = requests.session()
-        res = rs.get(bigUrl,headers=self.headers)
-        soup = BeautifulSoup(res.text)
+        soup = super(TagCrawler,self).req(bigUrl)
         leafUrl = []
         rg = 'leaf'
         for url in soup.select('.title'):            
