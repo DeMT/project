@@ -39,6 +39,7 @@ class CategoryCrawler(Requester):
          for url in urlList:
              res = rs.get(url,headers=self.headers)
              soup = BeautifulSoup(res.text)
+             
     def getThisCate(self,actualPage,index):
         #組合網址，先拆出pg 
         address=actualPage.split('&')
