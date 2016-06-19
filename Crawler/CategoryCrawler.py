@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import re
-
+  
 class CategoryCrawler(Requester):
     next =''
     domainUrl = 'https://tw.bid.yahoo.com/tw/'
@@ -20,18 +20,20 @@ class CategoryCrawler(Requester):
     def firstCraw(self):                #爬第一次，目的是取回下一頁連結
         soup = super(CategoryCrawler,self).req(self.url)
         nextpage = soup.select('.next-page a')[0]['href']
-        self.targetTag=(soup.select('#srp_bc span')[-1].text).encode('utf-8')    #這裡python內(unicode環境)->編碼為utf-8(str)
-        print self.targetTag  
-        instantBuy=soup.select('.yui3-u.hasbuyp a')[0]['href']                              #抓一下這個最小類別的名稱
+        self.targetTag=(soup.select('#srp_bc span')[-1].text).encode('utf-8')   #這裡python內(unicode環境)->編碼為utf-8(str)
+        self.categoryTag=(soup.select('#srp_bc span')[-2].text).encode('utf-8')    
+        print self.targetTag,self.categoryTag                   #抓一下這個最小類別的名稱作檔案名，類別名稱作為資料夾
+        instantBuy=soup.select('.yui3-u.hasbuyp a')[0]['href']                              
         return instantBuy
         
     def urlGather(self,url):                                #把一頁的網址收集起來 回傳一個List
-        soup = super(CategoryCrawler,self).req(self.url)
+        soup = super(CategoryCrawler,self).req(url)
         urlList =list()
         for title in soup.select('.srp-pdtitle'):
-            print title.text
+           
             #print title.text
             urlList.append(title.select('a')[0]['href'])
+            
             
         try:   
             self.next =soup.select('.next-page.yui3-u a')[0]['href']               #如果現在爬取的這頁是最後一頁
@@ -39,7 +41,7 @@ class CategoryCrawler(Requester):
             self.hasNext = False             
         return urlList     
     def contentCraw(self,url):
-        soup = super(CategoryCrawler,self).req(self.url)
+        soup = super(CategoryCrawler,self).req(url)
         content =''
         title = soup.select('.title')[0].text
         price = soup.select('.number')[0].text
@@ -48,20 +50,29 @@ class CategoryCrawler(Requester):
         sallerName = soup.select('.seller-name a')[0].text   
         question = self.numberCleaner(soup.select('.total-item-count ')[0].text)         
         qicUrl = soup.select('.main-image')[0]['src']
-        result =title+'_|'+url+'_|'+salCount+'_|'+price+'_|'+sallerName+'_|'+remark+'_|'+question+'_|'+qicUrl+'_|'+content
+        for font in soup.select('font'):         
+            if font.text !='':
+                tempC=re.sub('[\s+]', '', font.text)
+                tempC = tempC.strip(' \t\n\r')             
+                content += tempC
+        result =title+'_|'+url+'_|'+salCount+'_|'+price+'_|'+sallerName+'_|'+remark+'_|'+question+'_|'+qicUrl+'_|'+content+'$& \n'
                 #標題, 商品網址, 已賣數量, 價格, 賣家名稱 , 賣家評價 , 問與答數量 , 圖片網址 , 內文
-        return result
+        return result.encode('utf-8')
              
     def getThisCate(self,actualPage,index):
         #組合網址，先拆出pg 
         address=actualPage.split('&')
-        #塞入第n頁        
-        address[-5]= 'pg={}'.format(index)
-        address[-7]= 'aoffset={}'.format((index-1)*60)
+        #塞入第n頁
+        pg = re.sub(r'pg=[\d]+', 'pg={}'.format(index),actualPage)
+        aoffest = re.sub(r'aoffset=[\d]+', 'aoffset={}'.format((index-1)*60),pg)       
+        #address[-6]= 'pg={}'.format(index)
+        #address[-8]= 'aoffset={}'.format((index-1)*60)
         #放回actualPage
         actualPage = '&'.join(address)
+        if index==1 :
+            aoffest = self.domainUrl+aoffest+'&pjax=1' 
         
-        return actualPage 
+        return aoffest 
     def numberCleaner(self,st):
         match = re.search(r'[\d,]+',st)
         num = match.group().encode('utf-8')
@@ -78,13 +89,16 @@ if __name__ == '__main__':
     #如果物件的hasNext=True 則執行迴圈
      
     while cc.hasNext:       
-    # pg改成 .format形式在塞回成網址        
-        #actualPage=cc.getThisCate(actualPage,index)
-        
-        
-        print actualPage    
+    # pg改成 .format形式在塞回成網址
+             
+        actualPage=cc.getThisCate(actualPage,index)
+                
         urlList.extend(cc.urlGather(actualPage))
-        actualPage = cc.domainUrl+cc.next
+        cc.headers['Referer']=actualPage
+        
+        print  
+        
+        
      
           
         time.sleep(3)

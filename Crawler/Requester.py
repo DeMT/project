@@ -14,12 +14,13 @@ class Requester(object):
         'Accept-Encoding':'gzip, deflate, sdch, br' ,
         'Accept-Language':'zh-TW,zh;q=0.8,ja;q=0.6,en-US;q=0.4,en;q=0.2,zh-CN;q=0.2' ,
         'Connection':'keep-alive',    
-        'Host':'tw.bid.yahoo.com' ,
+        'Host':'tw.bid.yahoo.com' ,     
         
         'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36',
         'X-PJAX':'true',
         'X-Requested-With':'XMLHttpRequest' 
     }
+    global rs
     def req(self,url):
         connection = True
         soup=''
@@ -35,4 +36,6 @@ class Requester(object):
                 print 'connection error , sleep 1 min'                          
                 time.sleep(60)
                 
-                
+
+    
+                    
