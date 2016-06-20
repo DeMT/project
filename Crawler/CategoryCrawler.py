@@ -14,6 +14,10 @@ import re
 class CategoryCrawler(Requester):
     next =''
     domainUrl = 'https://tw.bid.yahoo.com/tw/'
+    leafUrl=[]
+    result=''
+    resultCount = 0                         
+   
     def __init__(self , url) :          #設定CategoryCrawler建構子
         self.url = url
         self.hasNext = True                      
@@ -79,10 +83,10 @@ class CategoryCrawler(Requester):
         return  num            
     # if main 裡面是單獨測試碼，直接執行可以得到測試結果         
 if __name__ == '__main__':
-    #在這裡需要輸入從標籤進來以後的第一個頁面   
-    cc = CategoryCrawler('https://tw.bid.yahoo.com/tw/2092109949-category-leaf.html?.r=1465376779?hpp=23336_cat_category')
-    #爬第一次  
-                                                                                  # ^^^^^^^^^^^^ 似乎只需要改這裡就能換標籤
+    addr = 'https://tw.bid.yahoo.com/tw/2092109949-category-leaf.html?.r=1465376779?hpp=23336_cat_category'  
+    #^^^^^^^^在這裡需要輸入從標籤進來以後的第一個頁面 ^^^^^^  
+    cc = CategoryCrawler(addr)
+    fileName = '在這裡輸入檔名'  #^^^輸入儲存檔名^^^               
     actualPage = cc.firstCraw()     
     urlList = []
     index =1
@@ -109,4 +113,21 @@ if __name__ == '__main__':
             print len(urlList)  
         else:
                 index+=1
-        
+        f = open( addr,'w')        
+        for i in urlList :            
+            try:
+                
+                cc.result += cc.contentCraw(i)
+                cc.resultCount += 1 
+                if cc.resultCount ==10:                    #改變 resultCount可以加快寫進速度，注意被ban
+                    f.write(cc.result+'\n')
+                    resultCount =0
+                    result = ''            
+                
+            except:
+                print '發生錯誤'
+                addre = 'E:/result/error.txt'
+                error = open(addre ,'a')
+                error.write(i+'\n')
+                continue
+        f.close()        
