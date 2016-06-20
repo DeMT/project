@@ -3,3 +3,7 @@
 trace code建議從 category -> tag -> main
 
 todo: 決定儲存格式以後完善contentCraw 函數，完成整個爬蟲
+
+2016/06/20 完成合作用版本，直接在category改網址執行可以爬下那個小項，記得同時也要改89行的檔名。 
+
+如果需要爬的分類在一起的話用main，用nopad++打開對照表，行數-1就是id的起點，endid決定爬到哪裡預設是最後
