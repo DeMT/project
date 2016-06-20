@@ -10,10 +10,10 @@ from bs4 import BeautifulSoup
 import time
 import re
 from Requester import Requester
+import codecs
 class TagCrawler(Requester) :
-    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.\
-                94 Safari/537.36'
-               }
+    leafName = []
+
     def __init__(self , url) :          #設定TagCrawler建構子
         self.url = url                  #啟動url
                         
@@ -26,12 +26,14 @@ class TagCrawler(Requester) :
     def leafCraw(self,bigUrl):
         soup = super(TagCrawler,self).req(bigUrl)
         leafUrl = []
+        
         rg = 'leaf'
         for url in soup.select('.title'):            
             isLeaf=re.search(rg,url['href'])
             try:
                 isLeaf.group()              #y拍的小項網址裡面會有leaf這個字，利用這點濾掉不是小項的網址
-                leafUrl.append(url['href'])
+                leafUrl.append(url['href'])                
+                self.leafName.append(url.text)
             except:
                    continue
         return leafUrl
@@ -49,6 +51,7 @@ if __name__ == '__main__':
     leafUrl=[]    
     for url in root:
         leafUrl.extend(tc.leafCraw(root[url]))
-    print len(leafUrl)
+    with codecs.open('name.txt' ,'w','utf-8')as t:
+        t.write('\n'.join(tc.leafName))
     
     
