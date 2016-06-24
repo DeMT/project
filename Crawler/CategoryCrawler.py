@@ -23,7 +23,10 @@ class CategoryCrawler(Requester):
         self.hasNext = True                      
     def firstCraw(self):                #爬第一次，目的是取回下一頁連結
         soup = super(CategoryCrawler,self).req(self.url)
-        nextpage = soup.select('.next-page a')[0]['href']
+        try:
+            nextpage = soup.select('.next-page a')[0]['href']
+        except:
+            pass
         self.targetTag=(soup.select('#srp_bc span')[-1].text).encode('utf-8')   #這裡python內(unicode環境)->編碼為utf-8(str)
         self.categoryTag=(soup.select('#srp_bc span')[-2].text).encode('utf-8')    
         print self.targetTag,self.categoryTag                   #抓一下這個最小類別的名稱作檔案名，類別名稱作為資料夾
@@ -83,10 +86,10 @@ class CategoryCrawler(Requester):
         return  num            
     # if main 裡面是單獨測試碼，直接執行可以得到測試結果         
 if __name__ == '__main__':
-    addr = 'https://tw.bid.yahoo.com/tw/2092109949-category-leaf.html?.r=1465376779?hpp=23336_cat_category'  
-    #^^^^^^^^在這裡需要輸入從標籤進來以後的第一個頁面 ^^^^^^  
+    addr = 'https://tw.bid.yahoo.com/tw/2092109949-category-leaf.html?.r=1465376779?hpp=23336_cat_category'  '輸入要爬的網址'
+    #在這裡需要輸入從標籤進來以後的第一個頁面   
     cc = CategoryCrawler(addr)
-    fileName = '在這裡輸入檔名'  #^^^輸入儲存檔名^^^               
+    name = '輸入檔名'               
     actualPage = cc.firstCraw()     
     urlList = []
     index =1
