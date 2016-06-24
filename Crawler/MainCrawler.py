@@ -15,12 +15,12 @@ if __name__ == '__main__':
     rootDir = tc.allsubCraw()
     leafUrl=[]
     result=''
-    resultCount = 0                         #改變爬取品項的起點
-    id = 2690                               #爬取品項停止點
-    endId = -1                                   
+    resultCount = 0                         
+    id = 2944                               #改變爬取品項的起點
+    endId = -1                              #爬取品項停止點     
     for url in rootDir:
         leafUrl.extend(tc.leafCraw(rootDir[url]))
-        print url ,'完成'
+        print url ,'complete'
         time.sleep(1)
     print len(leafUrl)
     urlList = []
@@ -68,5 +68,7 @@ if __name__ == '__main__':
                 error = open(addre ,'a')
                 error.write(i+'\n')
                 continue
-        f.close()        
+        f.close()
+
+        
             
