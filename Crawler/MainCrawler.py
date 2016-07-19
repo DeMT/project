@@ -16,8 +16,8 @@ if __name__ == '__main__':
     leafUrl=[]
     result=''
     resultCount = 0                         
-    id = 2944                               #改變爬取品項的起點
-    endId = -1                              #爬取品項停止點     
+    id = 5194                               #改變爬取品項的起點
+    endId = 5272                              #爬取品項停止點     
     for url in rootDir:
         leafUrl.extend(tc.leafCraw(rootDir[url]))
         print url ,'complete'
