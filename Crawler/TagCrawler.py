@@ -48,10 +48,15 @@ class TagCrawler(Requester) :
 if __name__ == '__main__':
     tc = TagCrawler('https://tw.bid.yahoo.com/tw/0-all.html?.r=1465414707')    
     root = tc.allsubCraw()
-    leafUrl=[]    
+    leafUrl=[]
+    count = 0    
     for url in root:
         leafUrl.extend(tc.leafCraw(root[url]))
     with codecs.open('name.txt' ,'w','utf-8')as t:
-        t.write('\n'.join(tc.leafName))
+        for url in leafUrl:
+            input=tc.leafName[count]+url
+            t.write(input)
+            t.write('\n')
+            count +=1
     
     
